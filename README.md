@@ -1,4 +1,4 @@
-# State-Space-Dynamic-Functional-Regression-for-Fixed-Income-Spread-Analysis
+# State-Space Dynamic Functional Regression for Multicurve
 
 This repository contains the code for the paper titled "State-Space Dynamic
 Functional Regression for Multicurve Fixed Income Spread Analysis and Stress Testing". 
