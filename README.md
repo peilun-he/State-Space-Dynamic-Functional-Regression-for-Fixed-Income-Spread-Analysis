@@ -3,8 +3,8 @@
 This repository contains the code for the paper titled "State-Space Dynamic
 Functional Regression for Multicurve Fixed Income Spread Analysis and Stress Testing".
 
-For test purpose, one can run the *test.m* file in Matlab. This file will apply the DNS
-model and the DNS-FR model on UK bond yields and calculate the RMSE. The following table
+For testing purposes, one can run the *test.m* file in Matlab. This file will apply the DNS
+model and the DNS-FR model to UK bond yields and calculate the RMSE. The following table
 gives the expected results after running this file. 
 
 | Maturity | DNS model | DNS-FR model |
