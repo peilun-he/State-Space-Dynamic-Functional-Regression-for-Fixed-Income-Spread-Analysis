@@ -394,7 +394,9 @@ gamma_functional %>%
   mutate(Contract = factor(Contract, levels = paste("Contract", 1: dim(UK)[2]))) %>%
   ggplot(aes(x = US_maturity, y = Values, color = Contract)) + 
   geom_line() + 
-  theme_classic() + 
+  theme_classic(base_size = 20) + 
+  #theme(legend.text = element_text(size = 14),
+  #      legend.title = element_text(size = 10)) +
   scale_color_manual(labels = c(expression(gamma[1](tau)), 
                                 expression(gamma[2](tau)), 
                                 expression(gamma[3](tau)),
@@ -447,56 +449,4 @@ for (i in 1: n_window) {
   # Save data
   #write.csv(U, paste("data_matlab/mw_U/Recon", i, ".csv", sep = ""), row.names = FALSE)
 }
-
-
-
-
-############
-dat_kpca <- US_in # data for KPCA
-use_python("/Users/HPL/anaconda3/bin/python3") # select python version
-pd <- import("pandas")
-np <- import("numpy")
-sk_dec <- import("sklearn.decomposition")
-sk_met <- import("sklearn.metrics")
-sk_ms <- import("sklearn.model_selection")
-
-Q <- 3
-kpca_machine <- sk_dec$KernelPCA(kernel = "rbf",
-                                 gamma = 0.037,
-                                 n_components = as.integer(Q))
-
-X_kpca <- kpca_machine$fit_transform( t(as.matrix(dat_kpca)) ) # principal component - A
-eig_values <- kpca_machine$eigenvalues_ # eigen values 
-eig_vector <- kpca_machine$eigenvectors_ # eigen vectors
-X_fit <- kpca_machine$X_fit_
-Lambda <- t(X_kpca) %*% X_kpca
-W <- X_kpca %*% solve(Lambda)
-V <- t(eig_vector)
-
-rbf_kernel <- function(x, y, gamma) exp( -gamma * sum((x-y)^2) )
-
-K <- apply(t(dat_kpca), 1, function(x) 
-  apply(t(dat_kpca), 1, function(y)
-    rbf_kernel(x, y, gamma = kpca_machine$gamma_)
-  )
-)
-
-phi_tilde_t <- 0 
-for (t in 1: Q){
-  phi_tilde_t <- phi_tilde_t + as.vector(matrix(K[t, ], nrow = 1) %*% W) * V
-}
-
-U <- matrix(0, nrow = dim(dat_kpca)[1], ncol = Q)
-for (t in 1: dim(dat_kpca)[1]){
-  for (j in 1: Q) {
-    U[t, j] <- sum(dat_kpca[t, ] * phi_tilde_t[j, ])
-  }
-}
-
-one <- matrix(1/12, nrow = 12, ncol = 12)
-K_centred <- K - one %*% K - K %*% one + one %*% K %*% one
-e_values <- eigen(K_centred)$values
-e_vectors <- eigen(K_centred)$vectors
-
-A <- e_vectors %*% diag(e_values^(0.5))
 

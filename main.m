@@ -195,7 +195,7 @@ if if_plot
 end
 
 %% DNS_FR model
-yield = UK; % in-sample yields
+yield = EU; % in-sample yields
 factor = US_st2_4; 
 yield_out = UK_out; % out-of-sample yields
 factor_out = US_factor_fore(121: end, :); % out-of-sample US factors
@@ -283,9 +283,9 @@ rmse2_fore = sqrt( mean( (yield_out - fore2).^2 ) );
 %cov_Y_original = cov_Y;
 %sample_original = sample_yields;
 
-%stress24 = estimated_yields2; % if US factors under stress case 1_3. Change the number "13" to the correct stress testing case. 
-%cov_Y_24 = cov_Y;
-%sample_stress_24 = sample_yields;
+stress24 = estimated_yields2; % if US factors under stress case 1_3. Change the number "13" to the correct stress testing case. 
+cov_Y_24 = cov_Y;
+sample_stress_24 = sample_yields;
 
 if if_plot
     % Estimated Nelson-Siegel factors
@@ -318,11 +318,11 @@ if if_plot
 end
 
 %% Spread under different stress
-shock = 1;
-stress = stress12;
-sample_stress = sample_stress_12;
-cov_Y_st = cov_Y_12;
-st = "st1_2";
+shock = 2;
+stress = stress24;
+sample_stress = sample_stress_24;
+cov_Y_st = cov_Y_24;
+st = "st2_4";
 country = "EU";
 
 diff = original - stress;
@@ -384,6 +384,8 @@ if if_plot
               77, 175, 74];
     figure; 
     set(gcf, 'Position', [100, 100, 900, 600]);
+    ax = gca;
+    ax.FontSize = 22; 
     hold on;
     for i = 1: 3
         plot(date, mean_diff(:, i), "Color", colors(i, :)/255, "LineWidth", 1);
@@ -397,19 +399,23 @@ if if_plot
         plot(date, sample_mean_diff2(:, i, 975), "--", "Color", colors(i, :)/255, "LineWidth", 0.5);
     end
     yline(0, "LineWidth", 0.5);
+    %ylim([-0.1, 0.3]);
     yLimits = ylim;
     if shock == 1
         xline(st1_start, "k", "LineWidth", 1.5);
         text(st1_start, yLimits(1), "Shock starts", ...
+            'FontSize', 22, ...
             'VerticalAlignment', 'bottom', ...
             'HorizontalAlignment', 'left');
         xline(st1_end, "k", "LineWidth", 1.5);
-        text(st1_end, yLimits(1), "Shock ends", ...
+        text(st1_end, yLimits(1)+0.03, "Shock ends", ...
+            'FontSize', 22, ...
             'VerticalAlignment', 'bottom', ...
             'HorizontalAlignment', 'left');
     elseif shock == 2
         xline(st2_start, "k", "LineWidth", 1.5);
         text(st2_start, yLimits(1), "Shock starts", ...
+            'FontSize', 22, ...
             'VerticalAlignment', 'bottom', ...
             'HorizontalAlignment', 'left');
     end
@@ -417,7 +423,7 @@ if if_plot
     ylabel("Mean difference in yields");
     legend(["Short-end maturity", "Middle maturity", "Long-end maturity"], "Location", "northwest");
     
-    %saveas(gcf, append("Mean_diff_in_", country, "_", st, ".jpg"));
+    saveas(gcf, append("Mean_diff_in_", country, "_", st, ".jpg"));
 
     % Difference of all curves
     colors = [166,206,227; 
@@ -685,9 +691,9 @@ mat_bl = 360; % matuirty of bond ladder portfolio
 new_maturity = (1: mat_bl)';
 
 yield = UK;
-factor = US;
+factor = US_st2_4;
 yield_out = UK_out; % out-of-sample price
-factor_out = US_factor_fore(121: end, :); % out-of-sample US factors
+factor_out = US_factor_fore_st2_4(121: end, :); % out-of-sample US factors
 
 n_factor = 3; % number of NS factors
 n_contract = size(yield, 2);
@@ -932,6 +938,8 @@ if if_plot
               64,64,64];
 
     figure;
+    ax = gca;
+    ax.FontSize = 14; 
     hold on;
     plot(0:12, value2 - value1, "Color", colors(1, :)/255, "LineWidth", 1);
     plot(0:12, value3 - value1, "Color", colors(2, :)/255, "LineWidth", 1);
@@ -966,6 +974,8 @@ if if_plot
               64,64,64];
 
     figure;
+    ax = gca;
+    ax.FontSize = 14; 
     hold on;
     plot(0:12, value_CI_sorted2(50, :) - value_CI_sorted1(50, :), "Color", colors(1, :)/255, "LineWidth", 1);
     plot(0:12, value_CI_sorted3(50, :) - value_CI_sorted1(50, :), "Color", colors(2, :)/255, "LineWidth", 1);
@@ -1022,6 +1032,9 @@ colors = [178,223,138;
           31,120,180];
 
 figure;
+%set(gcf, 'Position', [100, 100, 900, 600]);
+ax = gca;
+ax.FontSize = 14; 
 hold on;
 plot(maturity, price(index1, :), "Color", colors(1, :)/255, "LineWidth", 1);
 plot(maturity, estimated_yields1(index1, :), "Color", colors(2, :)/255, "LineWidth", 1);
@@ -1031,6 +1044,8 @@ ylabel("Yield");
 legend(["Original data", "DNS estimation", "DNS-FR estimation"]);
 
 figure;
+ax = gca;
+ax.FontSize = 14; 
 hold on;
 plot(maturity, price(index2, :), "Color", colors(1, :)/255, "LineWidth", 1);
 plot(maturity, estimated_yields1(index2, :), "Color", colors(2, :)/255, "LineWidth", 1);
@@ -1046,6 +1061,8 @@ plot(maturity(1:6), estimated_yields1(index2, 1:6), "Color", colors(2, :)/255, "
 plot(maturity(1:6), estimated_yields2(index2, 1:6), "Color", colors(3, :)/255, "LineWidth", 1);
 
 figure;
+ax = gca;
+ax.FontSize = 14; 
 hold on;
 plot(maturity, price(index3, :), "Color", colors(1, :)/255, "LineWidth", 1);
 plot(maturity, estimated_yields1(index3, :), "Color", colors(2, :)/255, "LineWidth", 1);
